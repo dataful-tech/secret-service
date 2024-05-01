@@ -4,7 +4,7 @@ SecretService is a Google Apps Script library that allows to store secrets (pass
 
 -   Choose a storage for the secrets:
     -   Any `Properties` instance from your script
-    -   Custom secret storage, like Google Clout Secret Manager
+    -   Custom secret storage, like Google Cloud Secret Manager
 -   Different modes in case of a missing secret:
     -   Silent: do nothing, return null.
     -   Strict: throw an error.
@@ -67,7 +67,7 @@ const SECRETS = SecretService.init({
 SECRETS.setSecret("API_KEY", "very-secret-value");
 
 // 3. Get the secret
-SECRETS.getSecret("API_KEY");
+const secretValue = SECRETS.getSecret("API_KEY");
 
 // Delete specific secrets:
 SECRETS.deleteSecrets(["API_KEY", "ANOTHER_SECRET"]);
@@ -110,6 +110,19 @@ const SECRETS = SecretService.init({
 ```
 
 Generally, `UserProperties` is the safest storage as it is accessible only to the user running the script. Caveat: the user properties of the owner of a Google Sheets document are accessible to anyone via a custom function (why Google, why?).
+
+#### Google Cloud Secret Manager
+
+You can use Google Cloud Secret Manager as a storage backend via the [GCSecretManager library](https://github.com/dataful-tech/GCSecretManager):
+
+```js
+const storage = GCSecretManager.init({project: "project-id"});
+const SECRETS = SecretService.init({storage});
+
+const secretValue = SECRETS.getSecret("API_KEY");
+```
+
+GCSecretManager does not support destructive operations. It will require extra permissions scopes to access the Secret Manger API. For the details, please refer to the [documentation](https://github.com/dataful-tech/GCSecretManager).
 
 #### Custom Storage
 
